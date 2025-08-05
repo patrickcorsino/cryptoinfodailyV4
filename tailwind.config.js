@@ -12,16 +12,11 @@ module.exports = {
         cardHover: '#1a1a1a',
         softBorder: '#2c2c2c',
         marketData: '#7788bb',
-        green: "#2aff8b",
-        red: "#ff497a"
       },
       boxShadow: {
         soft: '0 4px 15px rgba(0,0,0,0.3)',
       },
-      transitionProperty: {
-        glow: 'box-shadow, background-color, color',
-      }
     },
   },
   plugins: [],
-};
+}
