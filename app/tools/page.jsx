@@ -1,37 +1,40 @@
 "use client";
 import { useState } from "react";
-import PositionSizeCalculator from "../../components/tools/PositionSizeCalculator";
-import ProfitLossCalculator from "../../components/tools/ProfitLossCalculator";
-import CompoundingCalculator from "../../components/tools/CompoundingCalculator";
-import Converter from "../../components/tools/Converter";
+import { tools } from "../../lib/tools";
+import CoinConverter from "../../components/tools/CoinConverter";
+import ProfitCalculator from "../../components/tools/ProfitCalculator";
 
-const TOOLS = [
-  { name: "Position Size", component: <PositionSizeCalculator /> },
-  { name: "Profit/Loss", component: <ProfitLossCalculator /> },
-  { name: "Compounding", component: <CompoundingCalculator /> },
-  { name: "BTC/USD Converter", component: <Converter /> },
-];
+const TOOL_MAP = {
+  "Coin Converter": CoinConverter,
+  "Profit Calculator": ProfitCalculator,
+};
 
 export default function ToolsPage() {
-  const [selected, setSelected] = useState(0);
+  const [active, setActive] = useState("Coin Converter");
+  const ToolComponent = TOOL_MAP[active] || (() => <div />);
+
   return (
-    <div className="flex flex-col md:flex-row max-w-5xl mx-auto mt-6 rounded-2xl shadow-soft bg-card overflow-hidden min-h-[500px]">
-      <aside className="md:w-60 w-full bg-darkBg border-r border-softBorder py-5 flex flex-row md:flex-col md:space-x-0 space-x-2 md:space-y-4 items-center md:items-start px-3">
-        {TOOLS.map((tool, i) => (
-          <button
-            key={tool.name}
-            className={`w-full px-3 py-2 rounded-lg font-semibold text-left transition ${
-              i === selected ? "bg-degen text-black" : "hover:bg-cardHover text-white"
-            }`}
-            onClick={() => setSelected(i)}
-          >
-            {tool.name}
-          </button>
-        ))}
+    <div className="flex w-full max-w-5xl mx-auto min-h-[60vh] pt-10">
+      <aside className="min-w-[180px] pr-8 border-r border-softBorder">
+        <ul>
+          {tools.map((tool) => (
+            <li key={tool.name} className="mb-2">
+              <button
+                className={`w-full text-left px-2 py-2 rounded transition font-medium
+                  ${active === tool.name ? "bg-degen text-darkBg" : "text-white/90 hover:bg-cardHover"}
+                `}
+                onClick={() => setActive(tool.name)}
+              >
+                {tool.name}
+              </button>
+            </li>
+          ))}
+        </ul>
       </aside>
-      <main className="flex-1 p-6">
-        {TOOLS[selected].component}
-      </main>
+      <section className="flex-1 px-8">
+        <h1 className="text-2xl font-bold mb-4">{active}</h1>
+        <ToolComponent />
+      </section>
     </div>
   );
 }
