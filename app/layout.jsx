@@ -1,3 +1,5 @@
+import '../styles/globals.css' // <-- Add this line!
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -6,7 +8,7 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </head>
-      <body>
+      <body className="bg-darkBg text-white font-sans">
         {children}
       </body>
     </html>
