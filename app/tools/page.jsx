@@ -1,40 +1,36 @@
 "use client";
 import { useState } from "react";
 import PositionSizeCalculator from "../../components/tools/PositionSizeCalculator";
-import DcaCalculator from "../../components/tools/DcaCalculator";
-import PnlCalculator from "../../components/tools/PnlCalculator";
+import ProfitLossCalculator from "../../components/tools/ProfitLossCalculator";
+import CompoundingCalculator from "../../components/tools/CompoundingCalculator";
 import Converter from "../../components/tools/Converter";
 
 const TOOLS = [
-  { name: "Position Size", key: "position" },
-  { name: "DCA Calculator", key: "dca" },
-  { name: "PnL Calculator", key: "pnl" },
-  { name: "Crypto Converter", key: "converter" },
+  { name: "Position Size", component: <PositionSizeCalculator /> },
+  { name: "Profit/Loss", component: <ProfitLossCalculator /> },
+  { name: "Compounding", component: <CompoundingCalculator /> },
+  { name: "BTC/USD Converter", component: <Converter /> },
 ];
 
 export default function ToolsPage() {
-  const [active, setActive] = useState("position");
-
+  const [selected, setSelected] = useState(0);
   return (
-    <div className="flex flex-col md:flex-row max-w-5xl mx-auto mt-10 bg-card rounded-xl shadow-soft">
-      <aside className="w-full md:w-1/4 p-4 border-b md:border-b-0 md:border-r border-softBorder">
-        <div className="flex md:flex-col gap-2 md:gap-0">
-          {TOOLS.map((tool) => (
-            <button
-              key={tool.key}
-              className={`w-full text-left px-4 py-2 rounded-lg mb-2 font-semibold transition ${active === tool.key ? "bg-degen text-darkBg" : "hover:bg-cardHover text-white"}`}
-              onClick={() => setActive(tool.key)}
-            >
-              {tool.name}
-            </button>
-          ))}
-        </div>
+    <div className="flex flex-col md:flex-row max-w-5xl mx-auto mt-6 rounded-2xl shadow-soft bg-card overflow-hidden min-h-[500px]">
+      <aside className="md:w-60 w-full bg-darkBg border-r border-softBorder py-5 flex flex-row md:flex-col md:space-x-0 space-x-2 md:space-y-4 items-center md:items-start px-3">
+        {TOOLS.map((tool, i) => (
+          <button
+            key={tool.name}
+            className={`w-full px-3 py-2 rounded-lg font-semibold text-left transition ${
+              i === selected ? "bg-degen text-black" : "hover:bg-cardHover text-white"
+            }`}
+            onClick={() => setSelected(i)}
+          >
+            {tool.name}
+          </button>
+        ))}
       </aside>
       <main className="flex-1 p-6">
-        {active === "position" && <PositionSizeCalculator />}
-        {active === "dca" && <DcaCalculator />}
-        {active === "pnl" && <PnlCalculator />}
-        {active === "converter" && <Converter />}
+        {TOOLS[selected].component}
       </main>
     </div>
   );
