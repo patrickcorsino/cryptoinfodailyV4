@@ -60,4 +60,7 @@ export default function CoinDetail({ params }) {
           <SparklineChart data={coin.market_data?.sparkline_7d?.price || []} color={coin.market_data?.price_change_percentage_7d_in_currency?.usd > 0 ? 'green' : 'red'} />
         </div>
       </div>
-      <div className="mt-8 te
+      <div className="mt-8 text-gray-300 leading-relaxed text-sm" dangerouslySetInnerHTML={{ __html: coin.description?.en?.slice(0, 600) || 'No description available.' }} />
+    </div>
+  );
+}
