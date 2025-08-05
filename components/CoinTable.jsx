@@ -1,4 +1,3 @@
-// components/CoinTable.jsx
 import CoinRow from './CoinRow';
 
 export default function CoinTable({ coins, degenMode }) {
