@@ -1,24 +1,34 @@
 export default function FearGreedWidget({ data }) {
-  const fg = data?.value || 50;
-  const level = data?.value_classification || "Neutral";
-  const levelColor =
-    fg > 60
-      ? "text-green-400"
-      : fg < 40
-      ? "text-red-400"
-      : "text-yellow-300";
+  if (!data) return null;
+  const score = data.value;
+  const level = data.value_classification;
+  const color =
+    score >= 70
+      ? "#00ff99"
+      : score >= 60
+      ? "#3affaf"
+      : score >= 50
+      ? "#ffe066"
+      : score >= 40
+      ? "#fd7e14"
+      : "#ff3366";
 
   return (
-    <div className="bg-card rounded-xl p-4 shadow-soft flex flex-col items-center">
-      <div className="font-bold text-lg mb-2">Fear & Greed</div>
-      <div className={`text-4xl font-extrabold mb-2 ${levelColor}`}>{fg}</div>
-      <div className="mb-2">{level}</div>
-      <div className="w-full h-2 bg-darkBg rounded-full relative mt-2">
+    <div className="bg-card rounded-2xl shadow-soft p-5 flex flex-col min-h-[140px] items-center justify-center">
+      <div className="flex items-center gap-2 mb-2">
         <div
-          className={`h-2 rounded-full ${fg > 60 ? "bg-green-400" : fg < 40 ? "bg-red-400" : "bg-yellow-300"}`}
-          style={{ width: `${fg}%` }}
-        />
+          className="w-8 h-8 rounded-full flex items-center justify-center font-bold"
+          style={{
+            background: color,
+            color: "#232531",
+            boxShadow: `0 0 18px ${color}66`,
+          }}
+        >
+          {score}
+        </div>
+        <span className="font-semibold text-marketData text-xs">Fear & Greed</span>
       </div>
+      <div className="text-white/90 font-bold text-lg">{level}</div>
     </div>
   );
 }
