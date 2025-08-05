@@ -5,15 +5,15 @@
 body {
   @apply bg-darkBg text-white font-sans;
 }
-
 .glow-green {
   box-shadow: 0 0 8px #00ff99;
+  background: rgba(0,255,153,0.04);
 }
-
 .glow-red {
   box-shadow: 0 0 8px #ff3366;
+  background: rgba(255,73,122,0.06);
 }
-
 .hover-highlight:hover {
   background-color: #1a1a1a;
+  transition: background 0.15s;
 }
