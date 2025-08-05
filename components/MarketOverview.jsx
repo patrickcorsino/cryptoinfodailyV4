@@ -1,34 +1,36 @@
 export default function MarketOverview({ stats }) {
-  const { total_market_cap, total_volume_24h, market_cap_percentage, btc_dominance } = stats || {};
-
-  function format(num) {
-    if (!num) return "-";
-    if (num < 1e3) return num.toLocaleString();
-    if (num < 1e6) return (num / 1e3).toFixed(1) + "k";
-    if (num < 1e9) return (num / 1e6).toFixed(1) + "m";
-    if (num < 1e12) return (num / 1e9).toFixed(1) + "b";
-    return (num / 1e12).toFixed(1) + "t";
+  if (!stats) return null;
+  // Show in abbreviated format for mobile
+  function abbr(n) {
+    if (!n && n !== 0) return "-";
+    if (n < 1e3) return n;
+    if (n < 1e6) return (n / 1e3).toFixed(1) + "K";
+    if (n < 1e9) return (n / 1e6).toFixed(1) + "M";
+    if (n < 1e12) return (n / 1e9).toFixed(1) + "B";
+    return (n / 1e12).toFixed(1) + "T";
   }
 
   return (
-    <div className="bg-card rounded-xl p-4 shadow-soft flex flex-col gap-2">
-      <div className="font-bold text-lg mb-3">Market Stats</div>
-      <div className="flex flex-wrap gap-x-8 gap-y-2 items-center">
+    <div className="bg-card rounded-2xl shadow-soft p-5 min-h-[140px]">
+      <div className="mb-3 flex items-center">
+        <span className="text-marketData text-xs font-semibold">Market Stats</span>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         <div>
-          <span className="text-sm text-white">Mkt Cap: </span>
-          <span className="text-marketData font-mono">${format(total_market_cap)}</span>
+          <div className="text-xs text-white/60">Market Cap</div>
+          <div className="text-marketData font-bold text-base">${abbr(stats?.total_market_cap_usd)}</div>
         </div>
         <div>
-          <span className="text-sm text-white">24h Vol: </span>
-          <span className="text-marketData font-mono">${format(total_volume_24h)}</span>
+          <div className="text-xs text-white/60">24h Volume</div>
+          <div className="text-marketData font-bold text-base">${abbr(stats?.total_volume_usd)}</div>
         </div>
         <div>
-          <span className="text-sm text-white">BTC Dom: </span>
-          <span className="text-marketData font-mono">{btc_dominance?.toFixed(1) || "-"}%</span>
+          <div className="text-xs text-white/60">BTC Dominance</div>
+          <div className="text-marketData font-bold text-base">{stats?.btc_dominance?.toFixed(1) || "-"}%</div>
         </div>
         <div>
-          <span className="text-sm text-white">ETH Dom: </span>
-          <span className="text-marketData font-mono">{market_cap_percentage?.eth?.toFixed(1) || "-"}%</span>
+          <div className="text-xs text-white/60">Active Coins</div>
+          <div className="text-marketData font-bold text-base">{abbr(stats?.active_cryptocurrencies)}</div>
         </div>
       </div>
     </div>
