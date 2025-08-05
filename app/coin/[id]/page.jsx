@@ -1,65 +1,82 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getCoinDetail } from "../../../lib/api";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import SparklineChart from "../../../components/SparklineChart";
 
-export default function CoinDetailPage() {
-  const params = useParams();
-  const coinId = params.id;
+export default function CoinDetailPage({ params }) {
+  const { id } = params;
   const [coin, setCoin] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchDetail() {
-      const data = await getCoinDetail(coinId);
-      setCoin(data);
-    }
-    fetchDetail();
-  }, [coinId]);
+    if (!id) return;
+    setLoading(true);
+    getCoinDetail(id).then((c) => {
+      setCoin(c);
+      setLoading(false);
+    });
+  }, [id]);
 
-  if (!coin) {
-    return <div className="text-center text-lg text-gray-400 pt-10">Loading...</div>;
-  }
+  if (loading)
+    return <div className="p-8 text-center text-gray-400">Loading...</div>;
 
-  const mcap = coin?.market_data?.market_cap?.usd || 0;
-  const price = coin?.market_data?.current_price?.usd || 0;
-  const circ = coin?.market_data?.circulating_supply || 0;
-  const supply = coin?.market_data?.total_supply || 0;
-  const ath = coin?.market_data?.ath?.usd || 0;
+  if (!coin)
+    return (
+      <div className="p-8 text-center text-red-400">
+        Could not load coin data. <Link href="/">Go Home</Link>
+      </div>
+    );
+
+  const market = coin.market_data || {};
+  const sparkData = coin.market_data?.sparkline_7d?.price || [];
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-card rounded-2xl shadow-soft mt-6">
-      <div className="flex items-center mb-5">
-        <img src={coin.image?.large} className="w-12 h-12 mr-3" alt="" />
+    <main className="max-w-3xl mx-auto p-6">
+      <div className="flex items-center gap-4 mb-8">
+        <img src={coin.image?.large || ""} alt={coin.name} className="w-16 h-16 rounded-full" />
         <div>
-          <div className="text-2xl font-extrabold">{coin.name} <span className="text-marketData">{coin.symbol.toUpperCase()}</span></div>
-          <div className="text-lg">${price.toLocaleString()}</div>
+          <h1 className="text-3xl font-bold">{coin.name} <span className="text-lg text-gray-400">{coin.symbol?.toUpperCase()}</span></h1>
+          <p className="text-gray-400">{coin.categories?.[0]}</p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-6 text-lg mb-6">
+      <div className="mb-8 bg-card rounded-2xl p-6 shadow-cardGlow grid grid-cols-2 gap-4">
         <div>
-          <div className="text-marketData text-xs">Market Cap</div>
-          <div>${mcap.toLocaleString()}</div>
+          <div className="text-lg font-bold">${market.current_price?.usd?.toLocaleString() || "-"}</div>
+          <div className="text-sm text-gray-400">Current Price</div>
         </div>
         <div>
-          <div className="text-marketData text-xs">ATH</div>
-          <div>${ath.toLocaleString()}</div>
+          <div className={`text-lg font-bold ${market.price_change_percentage_24h > 0 ? "text-green-400" : "text-red-400"}`}>
+            {market.price_change_percentage_24h?.toFixed(2) || "0.00"}%
+          </div>
+          <div className="text-sm text-gray-400">24h Change</div>
         </div>
         <div>
-          <div className="text-marketData text-xs">Circulating</div>
-          <div>{circ.toLocaleString()}</div>
+          <div className="text-lg font-bold">${market.market_cap?.toLocaleString() || "-"}</div>
+          <div className="text-sm text-gray-400">Market Cap</div>
         </div>
         <div>
-          <div className="text-marketData text-xs">Total Supply</div>
-          <div>{supply ? supply.toLocaleString() : "∞"}</div>
+          <div className="text-lg font-bold">${market.total_volume?.toLocaleString() || "-"}</div>
+          <div className="text-sm text-gray-400">24h Volume</div>
+        </div>
+        <div>
+          <div className="text-lg font-bold">{market.circulating_supply?.toLocaleString() || "-"}</div>
+          <div className="text-sm text-gray-400">Circulating Supply</div>
+        </div>
+        <div>
+          <div className="text-lg font-bold">{market.max_supply?.toLocaleString() || "-"}</div>
+          <div className="text-sm text-gray-400">Max Supply</div>
         </div>
       </div>
-      <div className="mb-5">
-        <div className="font-semibold mb-2">About {coin.name}:</div>
-        <div className="prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: coin.description?.en || "No description." }} />
+      <div className="bg-card rounded-2xl p-6 shadow-cardGlow">
+        <h2 className="text-xl font-bold mb-2">7d Price Chart</h2>
+        <div className="w-full h-32">
+          <SparklineChart data={sparkData.slice(-50)} color={market.price_change_percentage_7d_in_currency?.usd > 0 ? "green" : "red"} />
+        </div>
       </div>
-      <a href={coin.links?.homepage?.[0] || "#"} target="_blank" rel="noopener noreferrer" className="text-degen underline text-lg">
-        Visit Official Website →
-      </a>
-    </div>
+      <div className="mt-8 text-center">
+        <Link href="/" className="px-6 py-2 rounded-lg bg-card text-white shadow-soft hover:shadow-cardGlow font-semibold border border-softBorder transition">Back to Home</Link>
+      </div>
+    </main>
   );
 }
