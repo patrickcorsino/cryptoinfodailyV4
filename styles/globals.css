@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-darkBg text-white font-sans;
+}
+
+.glow-green {
+  box-shadow: 0 0 8px #00ff99;
+}
+
+.glow-red {
+  box-shadow: 0 0 8px #ff3366;
+}
+
+.hover-highlight:hover {
+  background-color: #1a1a1a;
+}
