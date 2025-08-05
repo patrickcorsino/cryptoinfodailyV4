@@ -6,8 +6,8 @@ import TrendingCoins from "../components/TrendingCoins";
 import FearGreedWidget from "../components/FearGreedWidget";
 import MarketOverview from "../components/MarketOverview";
 import DegenToggle from "../components/DegenToggle";
-import Header from "../components/Header";
-import SearchModal from "../components/SearchModal";
+import SearchBar from "../components/SearchBar";
+import Link from "next/link";
 
 export default function Home() {
   const [coins, setCoins] = useState([]);
@@ -15,10 +15,17 @@ export default function Home() {
   const [fg, setFg] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showSearch, setShowSearch] = useState(false);
-  const [degenMode, setDegenMode] = useState(false);
+  const [degen, setDegen] = useState(false);
 
-  // For 30s data refresh, API limits
+  // For Degen Mode: find coins +10% / -10% in 24h
+  const highlightMap = {};
+  if (degen && coins.length) {
+    coins.forEach((coin) => {
+      if (coin.price_change_percentage_24h >= 10) highlightMap[coin.id] = "up";
+      else if (coin.price_change_percentage_24h <= -10) highlightMap[coin.id] = "down";
+    });
+  }
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -26,16 +33,17 @@ export default function Home() {
         getMarketData(),
         getTrending(),
         getFearGreed(),
-        getGlobalStats(),
+        getGlobalStats()
       ]);
       setCoins(Array.isArray(coinsData) ? coinsData : []);
       setTrending(Array.isArray(trendingData) ? trendingData : []);
       setFg(fgData || null);
       setStats(statsData || null);
     } catch (e) {
-      setCoins([]); setTrending([]); setFg(null); setStats(null);
+      setCoins([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -47,22 +55,26 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="max-w-7xl mx-auto px-2 md:px-6 pt-4 pb-8">
-      <Header
-        onSearchClick={() => setShowSearch(true)}
-        degenMode={degenMode}
-        setDegenMode={setDegenMode}
-      />
-      <SearchModal show={showSearch} onClose={() => setShowSearch(false)} />
-      <div className="grid md:grid-cols-3 gap-6 mb-7 mt-2">
-        <TrendingCoins coins={trending} />
-        <FearGreedWidget data={fg} />
-        <MarketOverview stats={stats} />
+    <main className="p-2 md:p-6 max-w-7xl mx-auto space-y-6">
+      <header className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <Link href="/" className="text-2xl font-extrabold bg-gradient-to-r from-white to-degen bg-clip-text text-transparent tracking-tight drop-shadow-md">CryptoInfoDaily</Link>
+        <div className="flex flex-row gap-4 items-center mt-4 md:mt-0">
+          <SearchBar />
+          <DegenToggle enabled={degen} setEnabled={setDegen} />
+          <Link href="/tools" className="ml-2 px-4 py-2 rounded-xl bg-card shadow-soft hover:shadow-cardGlow font-semibold text-white text-sm border border-softBorder transition">Tools</Link>
+        </div>
+      </header>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        {trending.length > 0 && <TrendingCoins coins={trending} />}
+        {fg && <FearGreedWidget data={fg} />}
+        {stats && <MarketOverview stats={stats} />}
       </div>
+
       {loading ? (
         <p className="text-center text-sm text-gray-400">Loading data...</p>
-      ) : Array.isArray(coins) && coins.length > 0 ? (
-        <CoinTable coins={coins} degenMode={degenMode} />
+      ) : coins.length > 0 ? (
+        <CoinTable coins={coins} highlightMap={highlightMap} />
       ) : (
         <p className="text-center text-sm text-red-500">No coin data available. Try refreshing in a few seconds.</p>
       )}
