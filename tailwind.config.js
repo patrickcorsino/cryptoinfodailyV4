@@ -1,8 +1,7 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}"
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -13,6 +12,8 @@ module.exports = {
         cardHover: '#1a1a1a',
         softBorder: '#2c2c2c',
         marketData: '#7788bb',
+        green: "#2aff8b",
+        red: "#ff497a"
       },
       boxShadow: {
         soft: '0 4px 15px rgba(0,0,0,0.3)',
