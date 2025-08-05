@@ -9,6 +9,7 @@ module.exports = {
         degen: "#00ff99",
         darkBg: "#0d1521",
         card: "#232531",
+        marketData: '#7788bb',
         cardHover: "#31324e",
         softBorder: "#2c2c2c",
         marketData: "#7788bb",
