@@ -1,23 +1,10 @@
-// /components/SparklineChart.jsx
 "use client";
 import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Filler,
-} from "chart.js";
+import { Chart, LineElement, PointElement, LinearScale, CategoryScale } from "chart.js";
+Chart.register(LineElement, PointElement, LinearScale, CategoryScale);
 
-// Register Chart.js scales (critical!)
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
-
-export default function SparklineChart({ data, color = "green" }) {
-  if (!Array.isArray(data) || data.length < 2) {
-    return <div className="h-6 w-full bg-gray-800 rounded"></div>;
-  }
+export default function SparklineChart({ data = [], color = "green" }) {
+  if (!Array.isArray(data) || data.length < 2) return null;
   return (
     <Line
       data={{
@@ -25,26 +12,23 @@ export default function SparklineChart({ data, color = "green" }) {
         datasets: [
           {
             data,
-            borderColor: color === "red" ? "#ff3366" : "#00ff99",
+            borderColor: color === "green" ? "#00ff99" : "#ff3366",
             backgroundColor: "transparent",
             borderWidth: 2,
             pointRadius: 0,
-            fill: false,
-            tension: 0.3,
-          },
-        ],
+            tension: 0.4,
+          }
+        ]
       }}
       options={{
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { borderJoinStyle: "round" } },
         responsive: true,
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        elements: { line: { tension: 0.3 } },
-        scales: {
-          x: { display: false, type: "category" }, // critical for error-free
-          y: { display: false },
-        },
+        maintainAspectRatio: false,
       }}
-      height={24}
-      width={100}
+      height={32}
+      width={90}
     />
   );
 }
