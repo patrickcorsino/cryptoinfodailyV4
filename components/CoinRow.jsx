@@ -1,4 +1,3 @@
-// components/CoinRow.jsx
 import Link from 'next/link';
 import SparklineChart from './SparklineChart';
 
@@ -6,12 +5,18 @@ export default function CoinRow({ coin, idx, degenMode }) {
   // Degen Mode: highlight big movers in 24h
   let highlight = '';
   if (degenMode) {
-    if (coin.price_change_percentage_24h >= 10) highlight = 'bg-green-800/20';
-    else if (coin.price_change_percentage_24h <= -10) highlight = 'bg-red-800/20';
+    if (coin.price_change_percentage_24h >= 10) highlight = 'bg-green-900/30';
+    else if (coin.price_change_percentage_24h <= -10) highlight = 'bg-red-900/30';
   }
 
   return (
-    <tr className={`transition hover:bg-[#232531] ${highlight}`}>
+    <tr
+      className={`
+        transition
+        ${highlight}
+        hover:bg-white/5
+      `}
+    >
       <td className="py-2 px-3 font-semibold text-marketData">{idx + 1}</td>
       <td className="py-2 px-3 flex items-center gap-2">
         <img src={coin.image} alt={coin.symbol} className="w-6 h-6 rounded-full" />
