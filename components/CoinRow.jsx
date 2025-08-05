@@ -1,16 +1,12 @@
+"use client";
 import Link from "next/link";
 import SparklineChart from "./SparklineChart";
 import { useEffect, useState } from "react";
+import { abbreviateNumber } from "../lib/utils";
 
-export default function CoinRow({ coin, index, degenMode, isMobile, abbreviateNumber }) {
+export default function CoinRow({ coin, highlight, isMobile }) {
   const [priceGlow, setPriceGlow] = useState("");
   const [prevPrice, setPrevPrice] = useState(coin?.current_price || 0);
-
-  // Highlight row if in degen mode and 24h move is big
-  const highlightDegen =
-    degenMode &&
-    (coin?.price_change_percentage_24h_in_currency >= 10 ||
-      coin?.price_change_percentage_24h_in_currency <= -10);
 
   useEffect(() => {
     if (!coin?.current_price) return;
@@ -21,57 +17,54 @@ export default function CoinRow({ coin, index, degenMode, isMobile, abbreviateNu
     }
     setPrevPrice(coin.current_price);
 
-    const timeout = setTimeout(() => setPriceGlow(""), 1200);
+    const timeout = setTimeout(() => setPriceGlow(""), 1000);
     return () => clearTimeout(timeout);
   }, [coin?.current_price]);
 
   if (!coin?.id) return null;
 
-  // Market Cap
-  const mcap = isMobile && abbreviateNumber
-    ? abbreviateNumber(coin?.market_cap)
-    : `$${coin?.market_cap?.toLocaleString() || "-"}`;
-
   return (
-    <Link href={`/coin/${coin?.id}`}>
-      <div
-        className={`grid grid-cols-7 gap-2 items-center py-3 px-2 rounded-lg cursor-pointer transition duration-150 shadow-soft 
-          hover-highlight
-          ${highlightDegen ? (coin?.price_change_percentage_24h_in_currency >= 10 ? "bg-green-900/60" : "bg-red-900/60") : ""}
-        `}
+    <Link href={`/coin/${coin.id}`}>
+      <tr
+        className={`cursor-pointer hover:bg-cardHover rounded-lg ${
+          highlight === "up" ? "bg-green-900/20" : ""
+        } ${highlight === "down" ? "bg-red-900/20" : ""}`}
+        style={{
+          boxShadow: highlight
+            ? "0 0 10px " +
+              (highlight === "up" ? "#00ff99" : "#ff3366")
+            : undefined,
+        }}
       >
-        <div className="text-xs text-marketData">{index}</div>
-        <div className="flex items-center space-x-2">
-          <img src={coin?.image || ""} alt="logo" className="w-6 h-6" />
-          <span className="font-semibold text-xs md:text-sm">{coin?.name || "-"}</span>
-        </div>
-        <p className={`text-xs md:text-sm transition-glow duration-300 ${priceGlow}`}>
-          ${coin?.current_price?.toLocaleString() || "-"}
-        </p>
-        <p
-          className={`text-xs md:text-sm ${coin?.price_change_percentage_1h_in_currency > 0
-            ? "text-green-400"
-            : "text-red-400"
-            }`}
-        >
-          {coin?.price_change_percentage_1h_in_currency?.toFixed(2) || "0.00"}%
-        </p>
-        <p
-          className={`text-xs md:text-sm ${coin?.price_change_percentage_24h_in_currency > 0
-            ? "text-green-400"
-            : "text-red-400"
-            }`}
-        >
-          {coin?.price_change_percentage_24h_in_currency?.toFixed(2) || "0.00"}%
-        </p>
-        <p className="text-xs md:text-sm">{mcap}</p>
-        <div className="h-6">
-          <SparklineChart
-            data={coin?.sparkline_in_7d?.price?.slice(-30) || []}
-            color={coin?.price_change_percentage_7d_in_currency > 0 ? "green" : "red"}
-          />
-        </div>
-      </div>
+        <td className="py-3 px-2 font-bold text-sm text-gray-300">{coin.market_cap_rank}</td>
+        <td className="py-3 px-2">
+          <img src={coin.image || ""} alt="logo" className="w-6 h-6 inline-block mr-2" />
+          <span className="font-semibold text-sm">{coin.symbol?.toUpperCase()}</span>
+        </td>
+        <td className={`py-3 px-2 text-sm transition-glow duration-300 ${priceGlow}`}>
+          ${isMobile ? abbreviateNumber(coin.current_price) : coin.current_price?.toLocaleString()}
+        </td>
+        <td className={`py-3 px-2 text-sm ${coin.price_change_percentage_1h_in_currency > 0 ? "text-green-400" : "text-red-400"}`}>
+          {coin.price_change_percentage_1h_in_currency?.toFixed(2) || "0.00"}%
+        </td>
+        <td className={`py-3 px-2 text-sm ${coin.price_change_percentage_24h_in_currency > 0 ? "text-green-400" : "text-red-400"}`}>
+          {coin.price_change_percentage_24h_in_currency?.toFixed(2) || "0.00"}%
+        </td>
+        <td className="py-3 px-2 text-sm">
+          ${isMobile ? abbreviateNumber(coin.market_cap) : coin.market_cap?.toLocaleString()}
+        </td>
+        <td className="py-3 px-2 text-sm">
+          ${isMobile ? abbreviateNumber(coin.total_volume) : coin.total_volume?.toLocaleString()}
+        </td>
+        <td className="py-3 px-2">
+          <div className="h-6 min-w-[48px] flex items-center">
+            <SparklineChart
+              data={coin.sparkline_in_7d?.price?.slice(-30) || []}
+              color={coin.price_change_percentage_7d_in_currency > 0 ? "green" : "red"}
+            />
+          </div>
+        </td>
+      </tr>
     </Link>
   );
 }
