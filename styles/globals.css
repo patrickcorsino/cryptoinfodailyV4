@@ -5,15 +5,28 @@
 body {
   @apply bg-darkBg text-white font-sans;
 }
+
 .glow-green {
   box-shadow: 0 0 8px #00ff99;
-  background: rgba(0,255,153,0.04);
 }
 .glow-red {
   box-shadow: 0 0 8px #ff3366;
-  background: rgba(255,73,122,0.06);
 }
+
 .hover-highlight:hover {
-  background-color: #1a1a1a;
-  transition: background 0.15s;
+  background-color: #31324e;
+  transition: background-color 0.15s;
+}
+
+.card-glow {
+  box-shadow: 0 2px 16px 0 rgba(0,255,153,0.14), 0 1.5px 5px 0 rgba(0,0,0,0.14);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #232531;
+}
+::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 4px;
 }
