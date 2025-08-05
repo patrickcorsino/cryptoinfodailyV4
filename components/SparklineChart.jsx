@@ -1,11 +1,23 @@
+// /components/SparklineChart.jsx
 "use client";
 import { Line } from "react-chartjs-2";
-import { Chart, LineElement, LinearScale, PointElement } from "chart.js";
-Chart.register(LineElement, LinearScale, PointElement);
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Filler,
+} from "chart.js";
 
-export default function SparklineChart({ data, color }) {
-  if (!data?.length) return <div />;
+// Register Chart.js scales (critical!)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
+export default function SparklineChart({ data, color = "green" }) {
+  if (!Array.isArray(data) || data.length < 2) {
+    return <div className="h-6 w-full bg-gray-800 rounded"></div>;
+  }
   return (
     <Line
       data={{
@@ -13,23 +25,26 @@ export default function SparklineChart({ data, color }) {
         datasets: [
           {
             data,
-            borderColor: color === "green" ? "#00ff99" : "#ff3366",
+            borderColor: color === "red" ? "#ff3366" : "#00ff99",
+            backgroundColor: "transparent",
             borderWidth: 2,
             pointRadius: 0,
             fill: false,
-            tension: 0.35,
+            tension: 0.3,
           },
         ],
       }}
       options={{
-        plugins: { legend: { display: false } },
-        elements: { point: { radius: 0 } },
-        scales: { x: { display: false }, y: { display: false } },
         responsive: true,
-        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        elements: { line: { tension: 0.3 } },
+        scales: {
+          x: { display: false, type: "category" }, // critical for error-free
+          y: { display: false },
+        },
       }}
-      width={60}
-      height={26}
+      height={24}
+      width={100}
     />
   );
 }
