@@ -1,13 +1,18 @@
 export default function TrendingCoins({ coins }) {
   return (
-    <div className="bg-card rounded-xl p-4 shadow-soft">
-      <div className="font-bold text-lg mb-3">Trending</div>
+    <div className="bg-card rounded-2xl shadow-soft p-5 min-h-[140px] flex flex-col">
+      <div className="mb-3 flex items-center">
+        <span className="text-marketData text-xs font-semibold">Trending</span>
+      </div>
       <ul>
-        {coins.slice(0, 5).map((coin, idx) => (
-          <li key={coin.item?.id || idx} className="flex items-center gap-2 mb-2 last:mb-0">
-            <img src={coin.item?.small || coin.image || ""} alt={coin.item?.name} className="w-5 h-5" />
-            <span className="font-semibold">{coin.item?.name || coin.name}</span>
-            <span className="ml-auto text-xs text-marketData">{coin.item?.symbol?.toUpperCase() || coin.symbol}</span>
+        {coins?.slice(0, 5).map((coin) => (
+          <li key={coin.id} className="flex items-center gap-2 mb-2">
+            <img src={coin?.large || coin?.image} alt="" className="w-5 h-5" />
+            <span className="font-semibold text-xs">{coin.name}</span>
+            <span className="text-marketData text-xs">{coin.symbol?.toUpperCase()}</span>
+            <span className="text-xs ml-auto text-white/80">
+              {coin.price_btc ? coin.price_btc.toFixed(7) + " BTC" : ""}
+            </span>
           </li>
         ))}
       </ul>
