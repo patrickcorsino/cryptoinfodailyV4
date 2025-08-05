@@ -1,46 +1,44 @@
 "use client";
 import CoinRow from "./CoinRow";
-import { useState, useEffect } from "react";
+import { useMediaQuery } from "../lib/useMediaQuery";
 
+// Helper to abbreviate big numbers (1.2m, 3.4b)
 function abbreviateNumber(num) {
-  if (num === undefined) return "-";
-  if (num < 1000) return num.toLocaleString();
-  if (num < 1e6) return (num / 1e3).toFixed(1) + "k";
-  if (num < 1e9) return (num / 1e6).toFixed(1) + "m";
-  if (num < 1e12) return (num / 1e9).toFixed(1) + "b";
-  return (num / 1e12).toFixed(1) + "t";
+  if (!num && num !== 0) return "-";
+  if (num < 1000) return num;
+  const units = ["K", "M", "B", "T"];
+  let u = -1;
+  let n = num;
+  while (n >= 1000 && u < units.length - 1) {
+    n /= 1000;
+    u++;
+  }
+  return `${parseFloat(n.toFixed(2))}${units[u]}`;
 }
 
-export default function CoinTable({ coins }) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+export default function CoinTable({ coins, degenMode }) {
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   return (
-    <div className="bg-card rounded-2xl shadow-soft mt-8 overflow-x-auto">
-      <div className="grid grid-cols-7 gap-2 px-4 py-2 font-semibold text-xs uppercase text-marketData">
-        <div className="flex items-center">Coin</div>
+    <div className="bg-card rounded-2xl shadow-soft mt-7">
+      <div className="grid grid-cols-7 gap-2 py-3 px-2 border-b border-softBorder font-bold text-marketData text-xs md:text-base">
+        <div>#</div>
+        <div>Coin</div>
         <div>Price</div>
         <div>1h %</div>
         <div>24h %</div>
         <div>Market Cap</div>
-        <div>Volume</div>
         <div>7d</div>
       </div>
       <div>
-        {coins.map((coin) => (
+        {coins?.map((coin, i) => (
           <CoinRow
             key={coin.id}
-            coin={{
-              ...coin,
-              market_cap: isMobile ? abbreviateNumber(coin.market_cap) : coin.market_cap,
-              total_volume: isMobile ? abbreviateNumber(coin.total_volume) : coin.total_volume
-            }}
+            coin={coin}
+            index={i + 1}
+            degenMode={degenMode}
+            isMobile={isMobile}
+            abbreviateNumber={isMobile ? abbreviateNumber : null}
           />
         ))}
       </div>
