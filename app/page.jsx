@@ -79,5 +79,10 @@ export default function Home() {
         <p className="text-center text-sm text-red-500">No coin data available. Try refreshing in a few seconds.</p>
       )}
     </main>
+        <div>
+      {/* ... header, trending, stats, etc. */}
+      <DegenToggle enabled={degenMode} setEnabled={setDegenMode} />
+      <CoinTable coins={coins} degenMode={degenMode} />
+    </div>
   );
 }
