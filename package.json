@@ -14,5 +14,10 @@
     "chart.js": "^4.4.3",
     "react-chartjs-2": "^5.2.0",
     "lucide-react": "^0.357.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.3",
+    "postcss": "^8.4.38",
+    "autoprefixer": "^10.4.19"
   }
 }
