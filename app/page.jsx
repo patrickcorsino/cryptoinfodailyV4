@@ -17,7 +17,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [degen, setDegen] = useState(false);
 
-  // For Degen Mode: find coins +10% / -10% in 24h
+  // Degen Mode highlight: coins with >10% or <-10% in 24h
   const highlightMap = {};
   if (degen && coins.length) {
     coins.forEach((coin) => {
@@ -71,18 +71,15 @@ export default function Home() {
         {stats && <MarketOverview stats={stats} />}
       </div>
 
-      {loading ? (
-        <p className="text-center text-sm text-gray-400">Loading data...</p>
-      ) : coins.length > 0 ? (
-        <CoinTable coins={coins} highlightMap={highlightMap} />
-      ) : (
-        <p className="text-center text-sm text-red-500">No coin data available. Try refreshing in a few seconds.</p>
-      )}
+      <section>
+        {loading ? (
+          <p className="text-center text-sm text-gray-400">Loading data...</p>
+        ) : coins.length > 0 ? (
+          <CoinTable coins={coins} highlightMap={highlightMap} />
+        ) : (
+          <p className="text-center text-sm text-red-500">No coin data available. Try refreshing in a few seconds.</p>
+        )}
+      </section>
     </main>
-        <div>
-      {/* ... header, trending, stats, etc. */}
-      <DegenToggle enabled={degenMode} setEnabled={setDegenMode} />
-      <CoinTable coins={coins} degenMode={degenMode} />
-    </div>
   );
 }
